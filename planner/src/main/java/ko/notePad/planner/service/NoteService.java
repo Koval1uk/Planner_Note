@@ -78,16 +78,28 @@ public class NoteService {
         updateNote.setTitle(note.getTitle());
         updateNote.setDescription(note.getDescription());
         updateNote.setLevel(note.getLevel());
-
+        noteRepo.save(updateNote);
         return HttpResponse.<Note>builder()
-                .notes(singleton(noteRepo.save(note)))
-                .message("Note created successfully!")
-                .status(CREATED)
-                .statusCode(CREATED.value())
+                .notes(singleton(updateNote))
+                .message("Note updated successfully!")
+                .status(OK)
+                .statusCode(OK.value())
                 .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
                 .build();
     }
 
     /* method to delete a note */
-
+    public HttpResponse<Note> deleteNote(Long id) throws NoteNotFoundException{
+        log.info("Deleting note from the database by id {}", id);
+        Optional<Note> optionalNote = ofNullable(noteRepo.findById(id)
+                .orElseThrow(() -> new NoteNotFoundException("The note was not found on the server :(")));
+        optionalNote.ifPresent(noteRepo::delete);
+        return HttpResponse.<Note>builder()
+                .notes(singleton(optionalNote.get()))
+                .message("Note deleted successfully!")
+                .status(OK)
+                .statusCode(OK.value())
+                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                .build();
+    }
 }

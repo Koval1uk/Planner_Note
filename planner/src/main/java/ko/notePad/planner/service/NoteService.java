@@ -48,7 +48,7 @@ public class NoteService {
         log.info("Getting all the notes by level {}", level);
         return HttpResponse.<Note>builder()
                 .notes(notes)
-                .message(notes.size() + " notes are of " + level + " level of importance")
+                .message(notes.size() + " notes are in " + level + " level of importance")
                 .status(OK)
                 .statusCode(OK.value())
                 .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))

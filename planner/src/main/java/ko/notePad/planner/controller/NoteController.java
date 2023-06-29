@@ -26,7 +26,7 @@ public class NoteController {
         return ResponseEntity.ok().body(noteService.getNotes());
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public ResponseEntity<HttpResponse<Note>> saveNote(@RequestBody @Valid Note note) {
         return ResponseEntity.created(
                 URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/note/all").toUriString())
@@ -43,7 +43,7 @@ public class NoteController {
         return ResponseEntity.ok().body(noteService.updateNote(note));
     }
 
-    @PutMapping("/delete/{noteId}")
+    @DeleteMapping("/delete/{noteId}")
     public ResponseEntity<HttpResponse<Note>> updateNote(@PathVariable(value = "noteId") Long id) throws NoteNotFoundException{
         return ResponseEntity.ok().body(noteService.deleteNote(id));
     }

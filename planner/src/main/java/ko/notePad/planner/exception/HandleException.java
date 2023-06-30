@@ -4,6 +4,7 @@ import aj.org.objectweb.asm.Handle;
 import ko.notePad.planner.domain.HttpResponse;
 import ko.notePad.planner.domain.Note;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,10 @@ import static ko.notePad.planner.util.DateUtil.dateTimeFormatter;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice @Slf4j
-public class HandleException extends ResponseEntityExceptionHandler {
+public class HandleException extends ResponseEntityExceptionHandler implements ErrorController {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        log.info(exception.getMessage());
+        log.error(exception.getMessage());
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         String fieldsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
         return new ResponseEntity<>(
@@ -43,7 +44,7 @@ public class HandleException extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception exception, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        log.info(exception.getMessage());
+        log.error(exception.getMessage());
         return new ResponseEntity<>(
                 HttpResponse.builder()
                         .reason(exception.getMessage())
@@ -86,7 +87,7 @@ public class HandleException extends ResponseEntityExceptionHandler {
 
 
     private ResponseEntity<HttpResponse<?>> createHttpErrorResponse(HttpStatus httpStatus, String reason, Exception exception) {
-        log.info(exception.getMessage());
+        log.error(exception.getMessage());
         return new ResponseEntity<>(
                 HttpResponse.builder()
                         .reason(reason)
